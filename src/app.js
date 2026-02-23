@@ -2,7 +2,6 @@ import express, { urlencoded } from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
-import { ApiResponse } from './utils/api-response.js'
 
 dotenv.config({path:"./.env"})
 

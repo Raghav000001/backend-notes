@@ -37,4 +37,17 @@
 - ip whitelisting 
 - data modeling with mongoose (practice models)
 
+**day 6**
+- understanding mvc architecture
+- cons of mvc
+- what industry follows
 
+**day 7**
+- mongo db crud operations
+
+
+**day 8**
+- starting with our auth module
+- unserstanding User schema for our project
+- hash the password with pre hooks
+- intro to mongoose methods with (isPasswordCorrect method)
