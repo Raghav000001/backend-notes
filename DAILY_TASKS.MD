@@ -51,3 +51,7 @@
 - unserstanding User schema for our project
 - hash the password with pre hooks
 - intro to mongoose methods with (isPasswordCorrect method)
+
+**day 9**
+- understanding tokens with jwt in theory
+- implementing access and refresh token
