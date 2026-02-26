@@ -143,7 +143,6 @@ userSchema.methods.generateForgotPasswordToken = async function () {
      }
 }
 
-// raghav => raghav
 
 const User = mongoose.model('User', userSchema)
 
