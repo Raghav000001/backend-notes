@@ -1,7 +1,6 @@
 import { app } from "./app.js";
 import { connectDB } from "./db/config.js";
 
-
 connectDB()
  .then(()=> {
      app.listen(process.env.PORT,()=> {

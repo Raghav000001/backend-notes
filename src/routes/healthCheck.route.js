@@ -1,6 +1,6 @@
 
 import e from "express";
-import { healthCheck } from "../controllers/healthCheck.conroller.js";
+import { healthCheck } from "../controllers/healthCheck.controller.js";
 
 const healthCheckRouter = e.Router()
 

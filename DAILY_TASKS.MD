@@ -29,7 +29,7 @@
   - intro to controllers
   - add a healthCheck api endpoint and test it in postman
   - intro to mongoose
-  - quick tour to mongodb atlas and connect to db to our application
+  - quick tour to mongodb atlas and connect db to our application
 
 **DAY 5**
 
@@ -55,3 +55,12 @@
 **day 9**
 - understanding tokens with jwt in theory
 - implementing access and refresh token
+
+**day 10**
+- tokens implementation
+
+**day 11**
+- understanding how to send mail in node.js
+
+**day 12**
+- how to register a user (production grade)

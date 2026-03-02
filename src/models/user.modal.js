@@ -122,7 +122,7 @@ userSchema.methods.generateEmailVerificationToken = async function () {
         this.emailVerificationToken =  await bcrypt.hash(rawToken,10)
         this.emailVerificationTokenExpiry = Date.now() + 24*60*60*1000
 
-        return rawToken
+        return rawToken 
      } catch (error) {
         console.log(error,"error generating email verification token");
      }
