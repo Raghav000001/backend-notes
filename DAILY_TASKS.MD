@@ -23,44 +23,54 @@
   -- cookieParser()
   -- express.static()
 
-  **DAY 4**
-
-  - basics of express routing
-  - intro to controllers
-  - add a healthCheck api endpoint and test it in postman
-  - intro to mongoose
-  - quick tour to mongodb atlas and connect db to our application
+    **DAY 4**
+    - basics of express routing
+    - intro to controllers
+    - add a healthCheck api endpoint and test it in postman
+    - intro to mongoose
+    - quick tour to mongodb atlas and connect db to our application
 
 **DAY 5**
 
 - MONGO DB recap
-- ip whitelisting 
+- ip whitelisting
 - data modeling with mongoose (practice models)
 
 **day 6**
+
 - understanding mvc architecture
 - cons of mvc
 - what industry follows
 
 **day 7**
+
 - mongo db crud operations
 
-
 **day 8**
+
 - starting with our auth module
 - unserstanding User schema for our project
 - hash the password with pre hooks
 - intro to mongoose methods with (isPasswordCorrect method)
 
 **day 9**
+
 - understanding tokens with jwt in theory
 - implementing access and refresh token
 
 **day 10**
+
 - tokens implementation
 
 **day 11**
+
 - understanding how to send mail in node.js
 
 **day 12**
+
 - how to register a user (production grade)
+
+**day 13**
+
+- intro to validators 
+- validate the user register endpoint

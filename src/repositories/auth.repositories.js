@@ -1,7 +1,5 @@
  
 import User from "../models/user.modal.js"
-import {ApiError} from "../utils/api-error.js"
-import { StatusCodes } from "http-status-codes"
 
  const createUser = async ({fullName,userName,email,password}) => {
     const user = await User.create({
@@ -15,9 +13,6 @@ import { StatusCodes } from "http-status-codes"
 
  const findUserById = async (id) => {
     const user = await User.findById(id)
-    if (!user) {
-        throw new ApiError(StatusCodes.NOT_FOUND,"user not found") 
-    }    
     return user
  }
 
@@ -44,7 +39,7 @@ import { StatusCodes } from "http-status-codes"
 
  const assignRefreshToken = async (userId,refreshToken) => {
      const user = await User.findByIdAndUpdate(userId,{
-         $set : { refreshToken : refreshToken }
+         $set : { refreshToken : refreshToken },
      })
     await user.save()
     return user
@@ -59,7 +54,5 @@ export {
     saveUser,
     findUserById,
     assignRefreshToken
-  
-
 }
 

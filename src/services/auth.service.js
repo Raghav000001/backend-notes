@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes"
-import { createUser, findUserByEmail, findUserByEmailOrUserName, saveUser } from "../repositories/auth.repositories.js"
+import { createUser, findUserByEmailOrUserName, saveUser } from "../repositories/auth.repositories.js"
 import { ApiError } from "../utils/api-error.js"
 import { userVerificationEmailContent } from "../utils/mail.templates.js"
 import { sendEmail } from "./mailer.js"
@@ -7,7 +7,7 @@ import { sendEmail } from "./mailer.js"
      
      const registerUserService = async ({fullName,userName,email,password}) => {
 
-         const existingUser = await findUserByEmailOrUserName(email)
+         const existingUser = await findUserByEmailOrUserName(email,userName)
          if (existingUser) {
             throw new ApiError(StatusCodes.BAD_REQUEST,"user already exists")
          }
@@ -20,6 +20,7 @@ import { sendEmail } from "./mailer.js"
          })
 
          console.log("user created");
+          
          
 
          const rawToken = await user.generateEmailVerificationToken()
