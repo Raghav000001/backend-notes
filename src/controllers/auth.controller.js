@@ -34,6 +34,9 @@ import { findUserById } from "../repositories/auth.repositories.js";
          }
         
     }
+
+    
+
     export {
      registerUserHandler
     }

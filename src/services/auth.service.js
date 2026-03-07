@@ -1,9 +1,9 @@
 import { StatusCodes } from "http-status-codes"
-import { createUser, findUserByEmailOrUserName, saveUser } from "../repositories/auth.repositories.js"
+import { createUser, findAllValidUsersWithValidVerificationToken, findUserByEmailOrUserName, saveUser, verifyUser } from "../repositories/auth.repositories.js"
 import { ApiError } from "../utils/api-error.js"
 import { userVerificationEmailContent } from "../utils/mail.templates.js"
 import { sendEmail } from "./mailer.js"
- 
+import bcrypt from "bcrypt" 
      
      const registerUserService = async ({fullName,userName,email,password}) => {
 
@@ -44,6 +44,39 @@ import { sendEmail } from "./mailer.js"
        return user
      }
 
+     const verifyUserService = async (rawToken) => {
+        if (!rawToken) {
+         throw new ApiError(StatusCodes.BAD_REQUEST,"token not found")
+        }
+
+        const usersWithToken = await findAllValidUsersWithValidVerificationToken()
+        if (!usersWithToken.length) {
+          throw new ApiError(StatusCodes.BAD_REQUEST,"no users found")
+        }
+ 
+        const comparision = await Promise.all(
+            usersWithToken.map( async (user)=> {
+                const isMatched = await bcrypt.compare(rawToken,user.emailVerificationToken)
+                return isMatched ? user : null
+            })
+        )
+
+        const matchedUser = comparision.find((result)=> result !== null )
+        
+        if (matchedUser.isEmailVerified) {
+          throw new ApiError(StatusCodes.BAD_REQUEST,"email already verified")
+        }
+
+
+      await verifyUser(matchedUser._id)
+      
+       return {
+          message:"user verification has been done successfully"
+       }
+      
+     }
+
      export {
-        registerUserService
+        registerUserService,
+        verifyUserService
      }

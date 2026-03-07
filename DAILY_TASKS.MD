@@ -74,3 +74,7 @@
 
 - intro to validators 
 - validate the user register endpoint
+
+**day 14**
+- verify user 
+- login

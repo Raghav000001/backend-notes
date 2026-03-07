@@ -47,12 +47,39 @@ import User from "../models/user.modal.js"
  }
 
 
+ const findAllValidUsersWithValidVerificationToken = async () => {
+     const users = await User.find({
+        isEmailVerified:false,
+        emailVerificationTokenExpiry : {$gt : Date.now() }
+     })
+
+     return users
+ }
+
+ const verifyUser = async (userId) => {
+     const verifiedUser = await User.findByIdAndUpdate(userId,{
+         $set:{
+             isEmailVerified:true
+         },
+         $unset:{
+            emailVerificationToken:null,
+            emailVerificationTokenExpiry:null
+         }
+     })
+
+     return verifiedUser
+   
+ }
+
+
 export {
     createUser,
     findUserByEmail,
     findUserByEmailOrUserName,
     saveUser,
     findUserById,
-    assignRefreshToken
+    assignRefreshToken,
+    findAllValidUsersWithValidVerificationToken,
+    verifyUser
 }
 
