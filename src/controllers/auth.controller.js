@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { ApiError } from "../utils/api-error.js";
-import { registerUserService } from "../services/auth.service.js";
+import { registerUserService, verifyUserService } from "../services/auth.service.js";
 import { ApiResponse } from "../utils/api-response.js";
 import { findUserById } from "../repositories/auth.repositories.js";
 
@@ -35,8 +35,23 @@ import { findUserById } from "../repositories/auth.repositories.js";
         
     }
 
-    
+    const verifyUserHandler = async (req,res) => {
+      try {
+         const {rawToken} = req.params
+         await verifyUserService(rawToken)
+         return res.status(400).json( new ApiResponse(StatusCodes.OK,{},"user verification successful"))
+      } catch (error) {
+         console.log(error,"error in verify user handler");
+         throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR,"error in verify user handler",{
+            error
+         })
+         
+      }
+      
+    }
+       
 
     export {
-     registerUserHandler
+     registerUserHandler,
+     verifyUserHandler
     }

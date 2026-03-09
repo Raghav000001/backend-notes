@@ -24,7 +24,7 @@ import bcrypt from "bcrypt"
          
 
          const rawToken = await user.generateEmailVerificationToken()
-         user.emailVerificationToken = rawToken
+        //  user.emailVerificationToken = rawToken
 
          await saveUser(user)
 
@@ -62,7 +62,10 @@ import bcrypt from "bcrypt"
         )
 
         const matchedUser = comparision.find((result)=> result !== null )
+          
+        console.log(matchedUser);
         
+         
         if (matchedUser.isEmailVerified) {
           throw new ApiError(StatusCodes.BAD_REQUEST,"email already verified")
         }
