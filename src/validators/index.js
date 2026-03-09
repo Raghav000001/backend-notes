@@ -8,6 +8,12 @@ export const userRegistrationValidatorSchema = z.object({
     password:z.string().min(5).max(50)
 })
 
+export const userLoginValidatorSchema = z.object({
+    email:z.string().email().toLowerCase(),
+    password:z.string().min(5).max(50)
+})
+
+
 
 
 

@@ -1,9 +1,23 @@
 import { StatusCodes } from "http-status-codes"
-import { createUser, findAllValidUsersWithValidVerificationToken, findUserByEmailOrUserName, saveUser, verifyUser } from "../repositories/auth.repositories.js"
+import { createUser, findAllValidUsersWithValidVerificationToken, findUserByEmail, findUserByEmailOrUserName, findUserById, saveUser, verifyUser } from "../repositories/auth.repositories.js"
 import { ApiError } from "../utils/api-error.js"
 import { userVerificationEmailContent } from "../utils/mail.templates.js"
 import { sendEmail } from "./mailer.js"
 import bcrypt from "bcrypt" 
+
+      const generateATandRt = async (userId) => {
+           const user = await findUserById(userId)
+           if (!user) {
+             throw new ApiError(StatusCodes.NOT_FOUND,"user not found")
+           }
+           const accessToken = user.generateAccessToken()
+           const refreshToken = user.generateRefreshToken()
+           return {
+              accessToken,
+              refreshToken
+           }
+      }
+
      
      const registerUserService = async ({fullName,userName,email,password}) => {
 
@@ -79,7 +93,39 @@ import bcrypt from "bcrypt"
       
      }
 
+     const loginUserService = async ({email,password}) => {
+        if (!email || !password) {
+           throw new ApiError(StatusCodes.BAD_REQUEST,"both email and password is required")
+        }
+        const user = await findUserByEmail(email)
+        if (!user) {
+          throw new ApiError(StatusCodes.BAD_REQUEST,"invalid email id")
+        }
+
+        const isPasswordCorrect = user.isPasswordCorrect(password)
+        if (!isPasswordCorrect) {
+            throw new ApiError(StatusCodes.BAD_REQUEST,"invalid password")
+        }
+
+        if (!user.isEmailVerified) {
+          throw new ApiError(StatusCodes.BAD_REQUEST,"please verify email before loggin in")
+        }
+ 
+        const {accessToken,refreshToken} = await generateATandRt(user._id)
+           
+        
+         
+
+        return {
+           user,
+           accessToken,
+           refreshToken
+        }
+       
+     }
+
      export {
         registerUserService,
-        verifyUserService
+        verifyUserService,
+        loginUserService
      }

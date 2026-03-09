@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { ApiError } from "../utils/api-error.js";
-import { registerUserService, verifyUserService } from "../services/auth.service.js";
+import { loginUserService, registerUserService, verifyUserService } from "../services/auth.service.js";
 import { ApiResponse } from "../utils/api-response.js";
 import { findUserById } from "../repositories/auth.repositories.js";
 
@@ -24,8 +24,8 @@ import { findUserById } from "../repositories/auth.repositories.js";
            throw new ApiError(404,"user not found after registration")
         }
 
-           return res.status(StatusCodes.OK).json(
-               new ApiResponse(StatusCodes.OK,createdUser,"user created successfully and a verification mail is sent to the user's email")
+           return res.status(StatusCodes.CREATED).json(
+               new ApiResponse(StatusCodes.CREATED,createdUser,"user created successfully and a verification mail is sent to the user's email")
            )
 
          } catch (error) {
@@ -49,9 +49,41 @@ import { findUserById } from "../repositories/auth.repositories.js";
       }
       
     }
+
+    const loginUserHandler = async (req,res) => {
+        try {
+          const {email,password} = req.body
+          const {user,accessToken,refreshToken} = await loginUserService({
+             email,
+             password
+          })
+          return res
+                    .status(StatusCodes.OK)
+                    .cookie("accessToken",accessToken,{
+                        httpOnly:true,
+                        secure:true
+                    })
+                    .cookie("refreshToken",refreshToken,{
+                        httpOnly:true,
+                        secure:true
+                    })
+                    .json(new ApiResponse(StatusCodes.OK,{
+                       user,
+                       accessToken,
+                       refreshToken
+                    },"user logged in successfully"))
+        } catch (error) {
+           console.log(error.message,"error in login user handler");
+         throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR,"error in login user handler",{
+            error
+         })
+        }
+      
+    }
        
 
     export {
      registerUserHandler,
-     verifyUserHandler
+     verifyUserHandler,
+     loginUserHandler
     }
