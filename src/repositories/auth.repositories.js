@@ -71,6 +71,20 @@ import User from "../models/user.modal.js"
    
  }
 
+ const logout = async (userId) => {
+      const user = await User.findByIdAndUpdate(userId,{
+          $unset:{
+              refreshToken:null
+          }
+      },{
+          new:true
+      })
+         
+      return user
+   
+ }
+
+
 
 export {
     createUser,
@@ -80,6 +94,7 @@ export {
     findUserById,
     assignRefreshToken,
     findAllValidUsersWithValidVerificationToken,
-    verifyUser
+    verifyUser,
+    logout
 }
 

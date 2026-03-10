@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes"
-import { createUser, findAllValidUsersWithValidVerificationToken, findUserByEmail, findUserByEmailOrUserName, findUserById, saveUser, verifyUser } from "../repositories/auth.repositories.js"
+import { createUser, findAllValidUsersWithValidVerificationToken, findUserByEmail, findUserByEmailOrUserName, findUserById, logout, saveUser, verifyUser} from "../repositories/auth.repositories.js"
 import { ApiError } from "../utils/api-error.js"
 import { userVerificationEmailContent } from "../utils/mail.templates.js"
 import { sendEmail } from "./mailer.js"
@@ -10,8 +10,8 @@ import bcrypt from "bcrypt"
            if (!user) {
              throw new ApiError(StatusCodes.NOT_FOUND,"user not found")
            }
-           const accessToken = user.generateAccessToken()
-           const refreshToken = user.generateRefreshToken()
+           const accessToken = await user.generateAccessToken()
+           const refreshToken = await user.generateRefreshToken()
            return {
               accessToken,
               refreshToken
@@ -102,7 +102,7 @@ import bcrypt from "bcrypt"
           throw new ApiError(StatusCodes.BAD_REQUEST,"invalid email id")
         }
 
-        const isPasswordCorrect = user.isPasswordCorrect(password)
+        const isPasswordCorrect = await user.isPasswordCorrect(password)
         if (!isPasswordCorrect) {
             throw new ApiError(StatusCodes.BAD_REQUEST,"invalid password")
         }
@@ -124,8 +124,22 @@ import bcrypt from "bcrypt"
        
      }
 
+     const logoutUserService = async (userId) => {
+            if (!userId) {
+               throw new ApiError(StatusCodes.BAD_REQUEST,"unauthorized")
+            }
+            await logout(userId)
+            return {
+                message:"user logged out sucessfully"
+            }
+     }
+
+
+
+
      export {
         registerUserService,
         verifyUserService,
-        loginUserService
+        loginUserService,
+        logoutUserService
      }
