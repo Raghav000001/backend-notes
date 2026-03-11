@@ -85,6 +85,43 @@ import User from "../models/user.modal.js"
  }
 
 
+const findUsersWithValidResetToken = async () => {
+    const users = await User.find({
+         forgotPasswordToken:{$ne:null},
+         forgotPasswordTokenExpiry:{$gt : Date.now() }
+         
+    })
+    return users
+}
+
+
+const resetPassword = async (id,newPassword) => {
+    const user = await User.findByIdAndUpdate(id,{
+        $set:{password:newPassword},
+        $unset:{
+            forgotPasswordToken:null,
+            forgotPasswordTokenExpiry:null
+        }
+    })
+    return user
+       
+}
+
+export const changeCurrentPassword = async (id,newPassword) => {
+     const user = await User.findByIdAndUpdate(id,{
+         $set:{password:newPassword}
+     },
+       {
+         new:true
+       }
+    )
+    return user
+
+}
+    
+
+
+
 
 export {
     createUser,
@@ -95,6 +132,8 @@ export {
     assignRefreshToken,
     findAllValidUsersWithValidVerificationToken,
     verifyUser,
-    logout
+    logout,
+    findUsersWithValidResetToken,
+    resetPassword
 }
 
