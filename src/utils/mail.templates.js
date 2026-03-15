@@ -42,6 +42,37 @@ var mailGenerator = new Mailgen({
  }
 
 
+
+ const resendVerificationEmailContent = ({name,verificationLink})=> {
+    try {
+        const email = {
+    body: {
+        name,
+        intro: 'hii, this is a verification email',
+        action: {
+            instructions: 'To verify your account please click on the link below:',
+            button: {
+                color: '#22BC66', // Optional action button color
+                text: 'Confirm your account',
+                link:verificationLink 
+            }
+        },
+        outro: 'Need help, or have questions? Just reply to this email, we\'d love to help.'
+    }
+        };
+
+        const html = mailGenerator.generate(email)
+        const plainText = mailGenerator.generatePlaintext(email)
+
+        return {html,plainText}
+    } catch (error) {
+        console.log(error,"error generating mail template");
+        throw error
+    }
+
+ }
+
+
   const forgotPasswordEmailContent = ({name,verificationLink})=> {
     try {
         const email = {
@@ -74,5 +105,6 @@ var mailGenerator = new Mailgen({
 
  export {
     userVerificationEmailContent,
-    forgotPasswordEmailContent
+    forgotPasswordEmailContent,
+    resendVerificationEmailContent
  }

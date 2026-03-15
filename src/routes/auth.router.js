@@ -7,7 +7,9 @@ import {
     verifyUserHandler,
     forgotPasswordRequestHandler,
     forgotPasswordHandler,
-    changeCurrentPasswordHandler
+    changeCurrentPasswordHandler,
+    resendVerificationEmailHandler,
+    refreshAccessTokenHandler,
 } from '../controllers/auth.controller.js'
 import { validate } from '../middlewares/zod.middleware.js'
 import {
@@ -30,4 +32,8 @@ authRouter.route('/logout').post(verifyJwt, logoutUserHandler)
 authRouter.route('/forgot-password/request').get(forgotPasswordRequestHandler)
 authRouter.route('/forgot-password/:rawToken').post(forgotPasswordHandler)
 authRouter.route("/change-password").post(verifyJwt,changeCurrentPasswordHandler)
+authRouter.route("/resend-verification-email").post(resendVerificationEmailHandler)
+authRouter.route("/refresh-token").post(refreshAccessTokenHandler)
+
+
 export default authRouter

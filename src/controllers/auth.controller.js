@@ -7,7 +7,9 @@ import {
     logoutUserService,
     registerUserService,
     verifyUserService,
-    changeCurrentPasswordService
+    changeCurrentPasswordService,
+    resendVerificationEmailService,
+    refreshAccessTokenService
 } from '../services/auth.service.js'
 import { ApiResponse } from '../utils/api-response.js'
 import { findUserById } from '../repositories/auth.repositories.js'
@@ -238,6 +240,64 @@ const changeCurrentPasswordHandler = async (req,res) => {
 
 }
 
+const resendVerificationEmailHandler = async (req,res) => {
+   try {
+     const {email} = req.body
+     await resendVerificationEmailService(email)
+     return res.status(StatusCodes.OK).json(
+        new ApiResponse(
+            StatusCodes.OK,
+            {},
+            "A verification mail has been sent to your email address"
+        )
+     )
+   } catch (error) {
+      console.log(error);
+      throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR,"error in resend verification email handler",{
+         error
+      })
+      
+   }
+}
+
+
+const refreshAccessTokenHandler = async (req,res) => {
+   try {
+      const token = req.cookies?.refreshToken
+      const {accessToken,refreshToken} = await refreshAccessTokenService(token)
+      return res.
+              status(StatusCodes.OK)
+              .cookie("accessToken",accessToken,{
+                httpOnly:true,
+                secure:true
+              })
+              .cookie("refreshToken",refreshToken,{
+                httpOnly:true,
+                secure:true
+              })
+              .json(
+         new ApiResponse(
+            StatusCodes.OK,
+            {
+               accessToken,
+               refreshToken
+            },
+            "Access token refreshed successfully"
+         )
+      )
+      
+   } catch (error) {
+      console.log(error);
+      throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR,"error in refresh access token handler",{
+         error
+      })
+      
+   }
+
+
+}
+
+
 export {
     registerUserHandler,
     verifyUserHandler,
@@ -246,5 +306,7 @@ export {
     logoutUserHandler,
     forgotPasswordRequestHandler,
     forgotPasswordHandler,
-    changeCurrentPasswordHandler
+    changeCurrentPasswordHandler,
+    resendVerificationEmailHandler,
+    refreshAccessTokenHandler
 }

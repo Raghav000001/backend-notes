@@ -11,14 +11,17 @@ import {
     changeCurrentPassword,
     saveUser,
     verifyUser,
+    assignRefreshToken
 } from '../repositories/auth.repositories.js'
 import { ApiError } from '../utils/api-error.js'
 import {
     forgotPasswordEmailContent,
+    resendVerificationEmailContent,
     userVerificationEmailContent,
 } from '../utils/mail.templates.js'
 import { sendEmail } from './mailer.js'
 import bcrypt from 'bcrypt'
+import jwt from "jsonwebtoken"
 
 const generateATandRt = async (userId) => {
     const user = await findUserById(userId)
@@ -130,6 +133,8 @@ const loginUserService = async ({ email, password }) => {
 
     const { accessToken, refreshToken } = await generateATandRt(user._id)
 
+    await assignRefreshToken(user._id,refreshToken)
+
     return {
         user,
         accessToken,
@@ -238,7 +243,76 @@ const changeCurrentPasswordService = async (user,oldPassword,newPassword) => {
        }
 
 }
-        
+
+
+const resendVerificationEmailService = async (email) => {
+     if (!email) {
+        throw new ApiError(StatusCodes.BAD_GATEWAY,"email is required")
+     }
+
+     const user = await findUserByEmail(email)
+
+     if (!user) {
+      throw new ApiError(StatusCodes.BAD_GATEWAY,"user not found")
+    }
+
+    if (user.isEmailVerified) {
+      throw new ApiError(StatusCodes.BAD_GATEWAY,"email already verified")
+    }
+
+    const rawToken = await user.generateEmailVerificationToken()
+    
+    await saveUser(user)
+
+     const verificationLink = `http://localhost:${process.env.PORT}/api/v1/auth/verify-email/${rawToken}`
+
+    const { html } = userVerificationEmailContent({
+        name: user.fullName,
+        verificationLink,
+    })
+
+    await sendEmail({
+        userEmail: user.email,
+        subject: 'user verification email',
+        html,
+    })
+
+    return {
+        message:"user verification email has been sent successfully"
+    }
+
+     
+} 
+
+const refreshAccessTokenService = async (incomingToken) => {
+     if (!incomingToken) {
+        throw new ApiError(StatusCodes.BAD_REQUEST,"token not found")
+     }
+
+     const decodedToken = jwt.verify(incomingToken,process.env.REFRESH_TOKEN_SECRET)
+   
+     const user = await findUserById(decodedToken.id)
+     if (!user) {
+        throw new ApiError(StatusCodes.BAD_REQUEST,"user not found")
+     }
+
+     if (incomingToken !== user.refreshToken) {
+        throw new ApiError(StatusCodes.BAD_REQUEST,"invalid token")
+     }
+
+     const {accessToken,refreshToken} = await generateATandRt(user._id)
+
+     await assignRefreshToken(user._id,refreshToken)
+
+     return{
+        accessToken,
+        refreshToken
+     }
+
+     
+     
+
+}
 
 
 export {
@@ -248,6 +322,8 @@ export {
     logoutUserService,
     forgotPasswordRequestService,
     forgotPasswordService,
-    changeCurrentPasswordService
-
+    changeCurrentPasswordService,
+    resendVerificationEmailService,
+    refreshAccessTokenService
+    
 }

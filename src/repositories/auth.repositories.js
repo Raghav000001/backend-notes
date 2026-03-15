@@ -41,15 +41,15 @@ import User from "../models/user.modal.js"
      const user = await User.findByIdAndUpdate(userId,{
          $set : { refreshToken : refreshToken },
      })
-    await user.save()
     return user
 
- }
+ }  
 
 
  const findAllValidUsersWithValidVerificationToken = async () => {
      const users = await User.find({
         isEmailVerified:false,
+        emailVerificationToken: { $exists: true, $ne: null },
         emailVerificationTokenExpiry : {$gt : Date.now() }
      })
 
